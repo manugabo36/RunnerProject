@@ -1,168 +1,129 @@
-
 import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.animation.TranslateTransition;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Camera;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.ImagePattern;
+import javafx.stage.Stage;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.geometry.Insets;
+import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
-import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
-import java.io.FileInputStream;
-import java.util.Objects;
-
-
 public class Helloworld extends Application {
+
+    private static final int CAMERA_MOVE_DISTANCE = 5;
+    private static final int WINDOW_WIDTH = 800;
+    private static final int WINDOW_HEIGHT = 600;
+
     @Override
-    public void start(Stage stage) {
+    public void start(Stage primaryStage) {
         VBox root = new VBox(10);
-        Image img=new Image("Desert.png");
-        root.getChildren().add(new ImageView(img));
-        Scene scene1 = new Scene(root, 800, 600);
-        stage.setTitle("Menu Principal");
-        stage.setScene(scene1);
+        root.setPadding(new Insets(20));
+        Scene mainScene = new Scene(root, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-        Label bonjour = new Label("Runner Desert");
-
+        Label titleLabel = new Label("Runner Desert");
         Button buttonStart = new Button("Start");
-        buttonStart.setOnAction(e -> openGame());
+        buttonStart.setOnAction(e -> openGame(primaryStage));
 
         Button buttonAide = new Button("Aide");
-        buttonAide.setOnAction(e -> openHelp());
+        buttonAide.setOnAction(e -> openHelp(primaryStage));
 
         Button buttonCredit = new Button("Crédit");
-        buttonCredit.setOnAction(e -> openCredit());
+        buttonCredit.setOnAction(e -> openCredit(primaryStage));
 
+        root.getChildren().addAll(titleLabel, buttonStart, buttonAide, buttonCredit);
 
-
-        root.getChildren().add(bonjour);
-        root.getChildren().add(buttonStart);
-        root.getChildren().add(buttonAide);
-        root.getChildren().add(buttonCredit);
-
-        stage.show();
+        primaryStage.setTitle("Menu Principal");
+        primaryStage.setScene(mainScene);
+        primaryStage.show();
     }
 
-    public void openGame() {
-        Image img1=new Image("desert.png");
-        Stage gameStage = new Stage();
+    private void openGame(Stage primaryStage) {
         StackPane gameRoot = new StackPane();
-        Scene scene2 = new Scene(gameRoot, 800, 400);
-        gameStage.setTitle("Page de jeu");
-        Button buttonBack = new Button("Start");
-        gameStage.setScene(scene2);
+        Scene gameScene = new Scene(gameRoot, WINDOW_WIDTH, WINDOW_HEIGHT);
+
         Label gameLabel = new Label("Contenu du jeu ici");
-        gameRoot.getChildren().add(gameLabel);
-        gameRoot.getChildren().add(new ImageView(img1));
-        gameStage.show();
-        Button CloseButton=new Button("Close");
-        gameRoot.getChildren().add(CloseButton);
-        CloseButton.setOnAction(e->openGame());
+        Rectangle player = new Rectangle(70, 70);
+        Image hero=new Image("course.png");
+        var imagePattern = new ImagePattern(hero);
+        player.setFill(imagePattern);
 
-        Group cameraGroup = new Group();
-        ImageView Hero = new ImageView(new Image("heros.png"));
-        cameraGroup.getChildren().add(Hero);
-
-        Timeline timeline = new Timeline(new KeyFrame(Duration.millis(1000), e -> moveCamera()));
+        final Timeline timeline = new Timeline();
         timeline.setCycleCount(Timeline.INDEFINITE);
+        timeline.setAutoReverse(true);
         timeline.play();
 
-        gameRoot.getChildren().add(cameraGroup);
+        ImageView imageView = new ImageView(hero);
+        gameRoot.getChildren().addAll(gameLabel, player);
 
-        gameStage.setScene(scene2);
-        gameStage.show();
-
-
-
+        Button Close = new Button("cancel button");
+        Close.setCancelButton(true);
 
 
 
+        Image img=new Image("Desert.png");
+        gameRoot.getChildren().add(new ImageView(img));
 
+        gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                handleKeyPressed(event, player);
+            }
+        });
 
-
+        primaryStage.setScene(gameScene);
     }
 
-
-
-
-
-
-
-
-
-    private void openHelp() {
-        Stage gameStage = new Stage();
-        StackPane gameRoot = new StackPane();
-        Scene scene3 = new Scene(gameRoot, 800, 400);
-        gameStage.setTitle("Aide");
-        gameStage.setScene(scene3);
-
-        Image img1=new Image("heros.png");
-        gameRoot.getChildren().add(new ImageView(img1));
-
-        Label HelpLabel = new Label("Aide pour jouer au jeu");
-        gameRoot.getChildren().add(HelpLabel);
-        gameStage.show();
-    }
-
-
-
-
-
-
-    private void openCredit() {
-        Stage gameStage = new Stage();
-        StackPane gameRoot = new StackPane();
-        Scene scene3 = new Scene(gameRoot, 800, 400);
-        gameStage.setTitle("Crédit");
-        gameStage.setScene(scene3);
-
-        Label HelpLabel = new Label("Ce jeu à été développer par Manuel GABON de l'ENSEA");
-        gameRoot.getChildren().add(HelpLabel);
-        gameStage.show();
-
-    }
-    private Group cameraGroup;
-    Group root = new Group();
-    Scene scene = new Scene(root, 800, 600);
-
-
-    private void handleKeyPressed(KeyEvent keyEvent) {
+    private void handleKeyPressed(KeyEvent keyEvent, Rectangle player) {
         switch (keyEvent.getCode()) {
             case UP:
-                cameraGroup.setTranslateY(cameraGroup.getTranslateY() - CAMERA_MOVE_DISTANCE);
+                player.setTranslateY(player.getTranslateY() - CAMERA_MOVE_DISTANCE);
                 break;
             case DOWN:
-                cameraGroup.setTranslateY(cameraGroup.getTranslateY() + CAMERA_MOVE_DISTANCE);
+                player.setTranslateY(player.getTranslateY() + CAMERA_MOVE_DISTANCE);
                 break;
             case LEFT:
-                cameraGroup.setTranslateX(cameraGroup.getTranslateX() - CAMERA_MOVE_DISTANCE);
+                player.setTranslateX(player.getTranslateX() - CAMERA_MOVE_DISTANCE);
                 break;
             case RIGHT:
-                cameraGroup.setTranslateX(cameraGroup.getTranslateX() + CAMERA_MOVE_DISTANCE);
+                player.setTranslateX(player.getTranslateX() + CAMERA_MOVE_DISTANCE);
                 break;
         }
     }
-    private void moveCamera() {
-        cameraGroup.setTranslateX(cameraGroup.getTranslateX() - CAMERA_MOVE_DISTANCE);}
-    private final int CAMERA_MOVE_DISTANCE = 5;
+
+    private void openHelp(Stage primaryStage) {
+        StackPane helpRoot = new StackPane();
+        Scene helpScene = new Scene(helpRoot, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+        Label helpLabel = new Label("Aide pour jouer au jeu");
+        helpRoot.getChildren().add(helpLabel);
+
+        primaryStage.setScene(helpScene);
+    }
+
+    private void openCredit(Stage primaryStage) {
+        StackPane creditRoot = new StackPane();
+        Scene creditScene = new Scene(creditRoot, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+        Label creditLabel = new Label("Ce jeu à été développé par Manuel GABON de l'ENSEA");
+        creditRoot.getChildren().add(creditLabel);
+
+        primaryStage.setScene(creditScene);
+
+
+
+    }
 
     public static void main(String[] args) {
         launch(args);
     }
 }
-
-
