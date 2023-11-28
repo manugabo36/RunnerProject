@@ -1,6 +1,4 @@
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
+import javafx.animation.*;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -14,7 +12,6 @@ import javafx.scene.image.ImageView;
 import javafx.geometry.Insets;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
@@ -57,10 +54,18 @@ public class Helloworld extends Application {
         var imagePattern = new ImagePattern(hero);
         player.setFill(imagePattern);
 
+
+
+
         final Timeline timeline = new Timeline();
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.setAutoReverse(true);
         timeline.play();
+
+
+
+
+
 
         ImageView imageView = new ImageView(hero);
         gameRoot.getChildren().addAll(gameLabel, player);
@@ -81,6 +86,33 @@ public class Helloworld extends Application {
         });
 
         primaryStage.setScene(gameScene);
+        ImageView background = new ImageView(img);
+        ImageView background2 = new ImageView(img);
+        gameRoot.getChildren().addAll(background, background2);
+
+
+        TranslateTransition trans1 = new TranslateTransition(Duration.seconds(7), background);
+        trans1.setFromX(0);
+        trans1.setToX(-800);
+        trans1.setInterpolator(Interpolator.LINEAR);
+        trans1.setCycleCount(Animation.INDEFINITE);
+        TranslateTransition trans2 = new TranslateTransition(Duration.seconds(7), background2);
+        trans2.setFromX(800);
+        trans2.setToX(0);
+        trans2.setCycleCount(Animation.INDEFINITE);
+        trans2.setInterpolator(Interpolator.LINEAR);
+        ParallelTransition parTrans = new ParallelTransition(trans1, trans2);
+        parTrans.play();
+
+
+        ImageView hero1 = new ImageView(hero);
+        ImageView hero2 = new ImageView(hero);
+        ImageView hero3 = new ImageView(hero);
+        ImageView hero4 = new ImageView(hero);
+        ImageView hero5 = new ImageView(hero);
+
+
+
     }
 
     private void handleKeyPressed(KeyEvent keyEvent, Rectangle player) {
