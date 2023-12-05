@@ -50,21 +50,15 @@ public class Helloworld extends Application {
 
         Label gameLabel = new Label("Contenu du jeu ici");
         Rectangle player = new Rectangle(70, 70);
-        Image hero=new Image("course.png");
+        Image hero = new Image("course.png");
         var imagePattern = new ImagePattern(hero);
         player.setFill(imagePattern);
-
-
 
 
         final Timeline timeline = new Timeline();
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.setAutoReverse(true);
         timeline.play();
-
-
-
-
 
 
         ImageView imageView = new ImageView(hero);
@@ -74,8 +68,7 @@ public class Helloworld extends Application {
         Close.setCancelButton(true);
 
 
-
-        Image img=new Image("Desert.png");
+        Image img = new Image("Desert.png");
         gameRoot.getChildren().add(new ImageView(img));
 
         gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -112,8 +105,9 @@ public class Helloworld extends Application {
         ImageView hero5 = new ImageView(hero);
 
 
-
     }
+
+    private boolean isJumping = false;
 
     private void handleKeyPressed(KeyEvent keyEvent, Rectangle player) {
         switch (keyEvent.getCode()) {
@@ -129,8 +123,22 @@ public class Helloworld extends Application {
             case RIGHT:
                 player.setTranslateX(player.getTranslateX() + CAMERA_MOVE_DISTANCE);
                 break;
+            case SPACE:
+                if (!isJumping) {
+                    isJumping = true;
+                    jump();
+                }
+                break;
         }
+
     }
+    private void jump() {
+
+}
+
+
+
+
 
     private void openHelp(Stage primaryStage) {
         StackPane helpRoot = new StackPane();
